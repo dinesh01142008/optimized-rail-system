@@ -73,45 +73,86 @@ st.markdown("""
     }
     
     /* ==================================================================== */
-    /* NAVIGATION RADIO TILES - MILD SHADE OF ELECTRIC BLUE (NO BLACK BORDER)*/
+    /* NAVIGATION RADIO TILES - INDIVIDUAL ROUNDED BOXES & POPPING HOVER    */
     /* ==================================================================== */
+    [data-testid="stSidebar"] div[role="radiogroup"],
+    div[data-testid="stRadio"] div[role="radiogroup"],
     div[role="radiogroup"] { 
-        gap: 6px; 
+        gap: 8px !important; 
+        padding: 2px 0 !important;
     }
-    div[role="radiogroup"] > label {
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] label,
+    [data-testid="stSidebar"] div[data-testid="stRadio"] label,
+    div[data-testid="stRadio"] label,
+    div[role="radiogroup"] label {
         background: #FFFFFF !important;
-        padding: 10px 14px;
-        border-radius: 9px !important;
+        padding: 11px 15px !important;
+        border-radius: 10px !important;
         border: 1.5px solid #E2E8F0 !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+        border-left: 4.5px solid #CBD5E1 !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
         transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background 0.2s ease !important;
-        cursor: pointer;
-        position: relative;
+        cursor: pointer !important;
+        position: relative !important;
         font-size: 12.5px !important;
         font-weight: 600 !important;
         color: #334155 !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin-bottom: 7px !important;
     }
-    div[role="radiogroup"] > label:hover { 
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] label:hover,
+    [data-testid="stSidebar"] div[data-testid="stRadio"] label:hover,
+    div[data-testid="stRadio"] label:hover,
+    div[role="radiogroup"] label:hover { 
         background: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 100%) !important; 
         transform: translateX(6px) translateY(-3px) scale(1.02) !important; 
         border-color: #60A5FA !important;
+        border-left: 5.5px solid #3B82F6 !important;
         box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), 0 3px 6px rgba(0, 0, 0, 0.04) !important; 
         color: #1D4ED8 !important;
         z-index: 25 !important;
     }
-    div[role="radiogroup"] > label[data-checked="true"],
-    div[role="radiogroup"] > label:has(input:checked) {
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked),
+    [data-testid="stSidebar"] div[data-testid="stRadio"] label:has(input:checked),
+    div[data-testid="stRadio"] label:has(input:checked),
+    div[role="radiogroup"] label:has(input:checked),
+    div[role="radiogroup"] label[data-checked="true"] {
         background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%) !important;
         border: 1.5px solid #93C5FD !important;
-        border-left: 5.5px solid #2563EB !important; /* Mild electric blue */
+        border-left: 5.5px solid #2563EB !important; /* Bold electric blue */
         box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
         color: #1E3A8A !important;
         font-weight: 750 !important;
         transform: translateX(4px) !important;
     }
+
+    [data-testid="stSidebar"] div[role="radiogroup"] label p,
+    div[data-testid="stRadio"] label p {
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        color: inherit !important;
+        margin: 0 !important;
+        padding-left: 6px !important;
+    }
+
+    [data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked) p,
+    div[data-testid="stRadio"] label:has(input:checked) p {
+        font-weight: 750 !important;
+        color: #1E3A8A !important;
+    }
+    
+    [data-testid="stSidebar"] div[role="radiogroup"] input[type="radio"]:checked + div,
+    [data-testid="stSidebar"] div[role="radiogroup"] input[type="radio"]:checked ~ div,
+    [data-testid="stSidebar"] div[data-testid="stRadio"] input[type="radio"]:checked + div,
+    div[data-testid="stRadio"] input[type="radio"]:checked + div,
     div[role="radiogroup"] input[type="radio"]:checked + div {
-        border-color: #3B82F6 !important;
-        background-color: #3B82F6 !important;
+        border-color: #2563EB !important;
+        background-color: #2563EB !important;
     }
     
     /* ==================================================================== */
