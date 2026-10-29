@@ -1,3 +1,9 @@
+# Auto-recovery failsafe: Install missing runtime libraries if requirements.txt was omitted or misnamed in GitHub
+for _pkg in ["plotly", "scipy"]:
+    try:
+        __import__(_pkg)
+    except ModuleNotFoundError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", _pkg])
 import hashlib
 import io
 import time as time_mod
@@ -10,12 +16,7 @@ import streamlit as st
 import sys
 import subprocess
 
-# Auto-recovery failsafe: Install missing runtime libraries if requirements.txt was omitted or misnamed in GitHub
-for _pkg in ["plotly", "scipy"]:
-    try:
-        __import__(_pkg)
-    except ModuleNotFoundError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", _pkg])
+
 
 # ==============================================================================
 # 1. CLEAN STYLING & NATIVE SIDEBAR TOGGLE
