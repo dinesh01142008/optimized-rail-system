@@ -1258,6 +1258,66 @@ df_traffic = calculate_train_movements_multiloop(
     st.session_state.fleet_db
 )
 
+
+def render_corridor_geo_map(lats, lons, stn_names, current_coords, height=460):
+    use_modern = hasattr(go, "Scattermap")
+    ScatterTrace = go.Scattermap if use_modern else getattr(go, "Scattermapbox", go.Scatter)
+    
+    fig_map = go.Figure()
+    fig_map.add_trace(ScatterTrace(
+        lat=lats, lon=lons, mode="lines", 
+        line=dict(width=6, color="#0052FF"), 
+        name="Main Railway Running Track", hoverinfo="skip"
+    ))
+    
+    track_color = "#059669" if st.session_state.global_track_condition == "Track Clear (Normal Line Speed)" else ("#D97706" if "Repair" in st.session_state.global_track_condition else "#DC2626")
+    fig_map.add_trace(ScatterTrace(
+        lat=lats, lon=lons, mode="lines", 
+        line=dict(width=4, color=track_color), 
+        name=f"Condition: {st.session_state.global_track_condition}", hoverinfo="name"
+    ))
+    fig_map.add_trace(ScatterTrace(
+        lat=lats, lon=lons, mode="markers+text", 
+        marker=dict(size=14, color="#0F172A"), 
+        text=stn_names, textposition="top right", 
+        textfont=dict(size=11, family="Inter", color="#0F172A", weight="bold"), 
+        name="Station Junction Stops"
+    ))
+    
+    for wz in st.session_state.global_work_zones:
+        if wz in current_coords:
+            coord = current_coords[wz]
+            fig_map.add_trace(ScatterTrace(
+                lat=[coord[0]], lon=[coord[1]], mode="markers+text", 
+                marker=dict(size=18, color="#8B5CF6"), 
+                text=[f"WORK ZONE: {wz}"], textposition="bottom left", 
+                textfont=dict(size=11, color="#8B5CF6", weight="bold"), 
+                name="Maintenance Possession Zone"
+            ))
+    
+    center_loc = dict(lat=float(np.mean(lats)), lon=float(np.mean(lons)))
+    if use_modern:
+        fig_map.update_layout(
+            map=dict(
+                style="open-street-map",
+                zoom=9.0,
+                center=center_loc
+            ),
+            margin=dict(l=0, r=0, t=10, b=0),
+            height=height
+        )
+    else:
+        fig_map.update_layout(
+            mapbox=dict(
+                style="open-street-map",
+                zoom=9.0,
+                center=center_loc
+            ),
+            margin=dict(l=0, r=0, t=10, b=0),
+            height=height
+        )
+    return fig_map
+
 def generate_dynamic_blocks(sector_dict, incident_stn, incident_status, approved_work_zones):
     stations = list(sector_dict.keys())
     blocks = []
@@ -1732,47 +1792,7 @@ if user_portal == "Central Command Center (Main Train Dispatch & Control Office)
             lats = [current_coords[s][0] for s in stn_names]
             lons = [current_coords[s][1] for s in stn_names]
             
-            fig_map = go.Figure()
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="lines", 
-                line=dict(width=6, color="#0052FF"), 
-                name="Main Railway Running Track", hoverinfo="skip"
-            ))
-            
-            track_color = "#059669" if st.session_state.global_track_condition == "Track Clear (Normal Line Speed)" else ("#D97706" if "Repair" in st.session_state.global_track_condition else "#DC2626")
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="lines", 
-                line=dict(width=4, color=track_color), 
-                name=f"Condition: {st.session_state.global_track_condition}", hoverinfo="name"
-            ))
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="markers+text", 
-                marker=dict(size=14, color="#0F172A"), 
-                text=stn_names, textposition="top right", 
-                textfont=dict(size=11, family="Inter", color="#0F172A", weight="bold"), 
-                name="Station Junction Stops"
-            ))
-            
-            for wz in st.session_state.global_work_zones:
-                if wz in current_coords:
-                    coord = current_coords[wz]
-                    fig_map.add_trace(go.Scattermapbox(
-                        lat=[coord[0]], lon=[coord[1]], mode="markers+text", 
-                        marker=dict(size=18, color="#8B5CF6"), 
-                        text=[f"WORK ZONE: {wz}"], textposition="bottom left", 
-                        textfont=dict(size=11, color="#8B5CF6", weight="bold"), 
-                        name="Maintenance Possession Zone"
-                    ))
-            
-            fig_map.update_layout(
-                mapbox=dict(
-                    style="open-street-map",
-                    zoom=9.0,
-                    center=dict(lat=float(np.mean(lats)), lon=float(np.mean(lons)))
-                ),
-                margin=dict(l=0, r=0, t=10, b=0),
-                height=460
-            )
+            fig_map = render_corridor_geo_map(lats, lons, stn_names, current_coords, height=460)
             st.plotly_chart(fig_map, use_container_width=True, config=PLOT_CONFIG)
 
         # TAB 1: INTERACTIVE TRAFFIC SIMULATION (RADAR MAP - SECOND POSITION)
@@ -3164,47 +3184,7 @@ elif user_portal == "Field Maintenance Terminal (Station Engineers & Track Work 
             lats = [current_coords[s][0] for s in stn_names]
             lons = [current_coords[s][1] for s in stn_names]
             
-            fig_map = go.Figure()
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="lines", 
-                line=dict(width=6, color="#0052FF"), 
-                name="Main Railway Running Track", hoverinfo="skip"
-            ))
-            
-            track_color = "#059669" if st.session_state.global_track_condition == "Track Clear (Normal Line Speed)" else ("#D97706" if "Repair" in st.session_state.global_track_condition else "#DC2626")
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="lines", 
-                line=dict(width=4, color=track_color), 
-                name=f"Condition: {st.session_state.global_track_condition}", hoverinfo="name"
-            ))
-            fig_map.add_trace(go.Scattermapbox(
-                lat=lats, lon=lons, mode="markers+text", 
-                marker=dict(size=14, color="#0F172A"), 
-                text=stn_names, textposition="top right", 
-                textfont=dict(size=11, family="Inter", color="#0F172A", weight="bold"), 
-                name="Station Junction Stops"
-            ))
-            
-            for wz in st.session_state.global_work_zones:
-                if wz in current_coords:
-                    coord = current_coords[wz]
-                    fig_map.add_trace(go.Scattermapbox(
-                        lat=[coord[0]], lon=[coord[1]], mode="markers+text", 
-                        marker=dict(size=18, color="#8B5CF6"), 
-                        text=[f"WORK ZONE: {wz}"], textposition="bottom left", 
-                        textfont=dict(size=11, color="#8B5CF6", weight="bold"), 
-                        name="Maintenance Possession Zone"
-                    ))
-            
-            fig_map.update_layout(
-                mapbox=dict(
-                    style="open-street-map",
-                    zoom=9.0,
-                    center=dict(lat=float(np.mean(lats)), lon=float(np.mean(lons)))
-                ),
-                margin=dict(l=0, r=0, t=10, b=0),
-                height=450
-            )
+            fig_map = render_corridor_geo_map(lats, lons, stn_names, current_coords, height=450)
             st.plotly_chart(fig_map, use_container_width=True, config=PLOT_CONFIG)
 
         with tabs[1]:
