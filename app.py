@@ -1,9 +1,3 @@
-# Auto-recovery failsafe: Install missing runtime libraries if requirements.txt was omitted or misnamed in GitHub
-for _pkg in ["plotly", "scipy"]:
-    try:
-        __import__(_pkg)
-    except ModuleNotFoundError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", _pkg])
 import hashlib
 import io
 import time as time_mod
